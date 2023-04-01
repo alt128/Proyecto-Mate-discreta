@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+unordered_map<string, vector<string>> graph = {
+    //Peru
+    {"Piura", {"Lima"}},
+    {"Chiclayo", {"Lima"}},
+    {"Trujillo", {"Lima"}},
+    {"Iquitos", {"Lima"}},
+    {"Lima", {"Piura", "Chiclayo", "Trujillo", "Iquitos", "Cusco", "Juliaca", "Arequipa"}},
+    {"Cusco", {"Lima", "PuertoMaldonado", "Arequipa"}},
+    {"PuertoMaldonado", {"Cusco"}},
+    {"Juliaca", {"Lima"}},
+    {"Arequipa", {"Lima", "Cusco"}},
+};
+
+//Funciones para la búsqueda en anchura 
+bool vueloDirecto(string origen, string destino) {
+    return find(graph[origen].begin(), graph[origen].end(), destino) != graph[origen].end();
+}
+
+vector<string> unaEscalaCiudades(string origen, string destino) {
+    vector<string> destinos = graph[origen];
+    vector<string> paradas;
+    for (string parada : destinos) {
+        if (vueloDirecto(parada, destino)) {
+            paradas.push_back(parada);
+        }
+    }
+    return paradas;
+}
+
+vector<pair<string, string>> dosEscalasCiudades(string origen, string destino) {
+    vector<string> destinos = graph[origen];
+    vector<pair<string, string>> paradas;
+    for (string parada1 : destinos) {
+        vector<string> destinos2 = graph[parada1];
+        for (string parada2 : destinos2) {
+            if (vueloDirecto(parada2, destino)) {
+                paradas.push_back({ parada1, parada2 });
+            }
+        }
+    }
+    return paradas;
+}
+
+int main() {
+    string origen, destino;
+    cout << "Ingrese la ciudad de origen: ";
+    cin >> origen;
+    cout << "Ingrese la ciudad de destino: ";
+    cin >> destino;
+
+    if (vueloDirecto(origen, destino)) {
+        cout << "Hay un vuelo directo de " << origen << " a " << destino << endl;
+    }
+    else {
+        vector<string> paradas = unaEscalaCiudades(origen, destino);
+        if (!paradas.empty()) {
+            cout << "Hay una conexión con una escala en ";
+            for (string parada : paradas) {
+                cout << parada << " ";
+            }
+            cout << "entre " << origen << " y " << destino << endl;
+        }
+        else {
+            vector<pair<string, string>> paradas = dosEscalasCiudades(origen, destino);
+            if (!paradas.empty()) {
+                cout << "Hay una conexión con dos escalas en ";
+                for (auto parada : paradas) {
+                    cout << parada.first << " y " << parada.second << ", ";
+                }
+                cout << "entre " << origen << " y " << destino << endl;
+            }
+            else {
+                cout << "No hay conexión entre " << origen << " y " << destino << endl;
+            }
+        }
+    }
+    return 0;
+}
+      
