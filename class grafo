@@ -1,0 +1,33 @@
+class Grafo {
+private:
+    unordered_map<string, vector<string>> graph;
+public:
+    Grafo(unordered_map<string, vector<string>> g) : graph(g) {}
+
+    bool vueloDirecto(string origen, string destino) {
+        return find(graph[origen].begin(), graph[origen].end(), destino) != graph[origen].end();
+    }
+    vector<string> unaEscalaCiudades(string origen, string destino) {
+        vector<string> destinos = graph[origen];
+        vector<string> paradas;
+        for (string parada : destinos) {
+            if (vueloDirecto(parada, destino)) {
+                paradas.push_back(parada);
+            }
+        }
+        return paradas;
+    }
+    vector<pair<string, string>> dosEscalasCiudades(string origen, string destino) {
+        vector<string> destinos = graph[origen];
+        vector<pair<string, string>> paradas;
+        for (string parada1 : destinos) {
+            vector<string> destinos2 = graph[parada1];
+            for (string parada2 : destinos2) {
+                if (vueloDirecto(parada2, destino)) {
+                    paradas.push_back({ parada1, parada2 });
+                }
+            }
+        }
+        return paradas;
+    }
+};
